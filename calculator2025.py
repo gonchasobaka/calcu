@@ -33,14 +33,17 @@ class Calculator2025:
     def calculate(self, expression: str) -> float:
         """Вычисляет математическое выражение"""
         try:
-            # Замена констант
+            # Замена констант (только целые слова)
             expr = expression.lower()
             for const_name, const_value in self.constants.items():
-                expr = expr.replace(const_name, str(const_value))
+                # Используем регулярное выражение с границами слов
+                pattern = r'\b' + re.escape(const_name) + r'\b'
+                expr = re.sub(pattern, str(const_value), expr)
 
-            # Замена переменных
+            # Замена переменных (только целые слова)
             for var_name, var_value in self.variables.items():
-                expr = expr.replace(var_name.lower(), str(var_value))
+                pattern = r'\b' + re.escape(var_name.lower()) + r'\b'
+                expr = re.sub(pattern, str(var_value), expr)
 
             # Замена функций на их math эквиваленты
             expr = self._prepare_expression(expr)
@@ -231,8 +234,11 @@ class Calculator2025:
             # Время
             'min_s': 60,
             'hour_s': 3600,
+            'hour_min': 60,
             'day_s': 86400,
+            'day_hour': 24,
             'week_s': 604800,
+            'week_day': 7,
         }
 
         key = f"{from_unit}_{to_unit}"
